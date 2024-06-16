@@ -20,11 +20,6 @@ class AuthController {
       const { email, password } = req.body;
       const userData = await userService.registration(email, password);
 
-      res.cookie("refreshToken", userData.refreshToken, {
-        maxAge: 30 * 24 * 60 * 60 * 1000,
-        httpOnly: true,
-      });
-
       return res.send(userData);
     } catch (e) {
       next(e);
@@ -36,11 +31,6 @@ class AuthController {
       const { password, email } = req.body;
       const userData = await userService.login(email, password);
 
-      res.cookie("refreshToken", userData.refreshToken, {
-        maxAge: 30 * 24 * 60 * 60 * 1000,
-        httpOnly: true,
-      });
-
       return res.send(userData);
     } catch (e) {
       next(e);
@@ -49,9 +39,8 @@ class AuthController {
 
   async logout(req, res, next) {
     try {
-      const { refreshToken } = req.cookies;
+      const { refreshToken } = req.body;
       const token = await userService.logout(refreshToken);
-      res.clearCookie("refreshToken");
       res.status(200);
     } catch (e) {
       next(e);
@@ -70,14 +59,8 @@ class AuthController {
 
   async refresh(req, res, next) {
     try {
-      const { refreshToken } = req.cookies;
-      console.log(refreshToken);
+      const { refreshToken } = req.body;
       const userData = await userService.refresh(refreshToken);
-
-      res.cookie("refreshToken", userData.refreshToken, {
-        maxAge: 30 * 24 * 60 * 60 * 1000,
-        httpOnly: true,
-      });
 
       return res.send(userData);
     } catch (e) {
@@ -89,6 +72,71 @@ class AuthController {
     try {
       const users = await User.find();
       res.send(users);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  async getUser(req, res, next) {
+    try {
+      const { email } = req.body;
+      const user = await User.findOne({ email });
+      res.send(user);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  async personalInfo(req, res, next) {
+    try {
+      const personalData = req.body;
+      const accessToken = req.headers["authorization"].split("Bearer ")[1];
+
+      const userData = await userService.personalInfo(
+        personalData,
+        accessToken,
+      );
+
+      res.send(userData);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  async allPersonalData(req, res, next) {
+    try {
+      const accessToken = req.headers["authorization"].split("Bearer ")[1];
+      const { email } = req.query;
+
+      const userData = await userService.allPersonalData(accessToken, email);
+
+      res.send(userData);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  async order(req, res, next) {
+    try {
+      const personalData = req.body;
+      const accessToken = req.headers["authorization"].split("Bearer ")[1];
+
+      const userData = await userService.order(accessToken, personalData);
+
+      res.send(userData);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  async allOrders(req, res, next) {
+    try {
+      const { email } = req.query;
+      const accessToken = req.headers["authorization"].split("Bearer ")[1];
+
+      const userData = await userService.allOrders(accessToken, email);
+
+      res.send(userData);
     } catch (e) {
       next(e);
     }

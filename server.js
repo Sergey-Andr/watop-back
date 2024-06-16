@@ -31,6 +31,7 @@ app.use(errorMiddleware);
 const start = async () => {
   try {
     await mongoose.connect(DB_URL);
+
     app.listen(PORT, () => {
       console.log(`Example app listening on port ${PORT}`);
     });

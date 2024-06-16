@@ -20,7 +20,7 @@ class MailService {
         from: process.env.SMTP_USER,
         to,
         subject: "Activate account on " + process.env.API_URL,
-        test: "Please follow the link to activate",
+        text: "Please follow the link to activate",
         html: `
         <div>
             <h1>Please follow the link to activate</h1>

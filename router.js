@@ -27,8 +27,14 @@ router.post(
 );
 router.post("/auth/login", AuthController.login);
 router.post("/auth/logout", AuthController.logout);
-router.get("/auth/activate/:link", AuthController.activateLink);
 router.post("/auth/refresh", AuthController.refresh);
+router.get("/auth/activate/:link", AuthController.activateLink);
 router.get("/auth/users", roleMiddleware(["admin"]), AuthController.getUsers);
+router.get("/auth/user", roleMiddleware(["admin"]), AuthController.getUser);
+
+router.post("/profile/personalInfo", AuthController.personalInfo);
+router.post("/profile/order", AuthController.order);
+router.get("/profile/allPersonalData", AuthController.allPersonalData);
+router.get("/profile/allOrders", AuthController.allOrders);
 
 module.exports = router;
