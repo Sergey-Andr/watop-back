@@ -27,6 +27,8 @@ router.post(
 );
 router.post("/auth/login", AuthController.login);
 router.post("/auth/logout", AuthController.logout);
+router.post("/auth/requestPasswordReset", AuthController.requestPasswordReset);
+router.post("/auth/updatePassword", AuthController.updatePassword);
 router.post("/auth/refresh", AuthController.refresh);
 router.get("/auth/activate/:link", AuthController.activateLink);
 router.get("/auth/users", roleMiddleware(["admin"]), AuthController.getUsers);

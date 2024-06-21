@@ -25,12 +25,14 @@ class UserService {
       const hashPassword = bcrypt.hashSync(password, 7);
       const userRole = await Role.findOne({ value: "user" });
       const activationLink = uuid.v4();
+      const changePassword = uuid.v4();
 
       const user = new User({
         email,
         password: hashPassword,
         roles: [userRole.value],
         activationLink,
+        changePassword,
       });
 
       await user.save();
@@ -75,6 +77,28 @@ class UserService {
 
   async logout(refreshToken) {
     return await tokenService.removeToken(refreshToken);
+  }
+
+  async requestPasswordReset(email) {
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw ApiError.BadRequest("incorrect email");
+    }
+
+    await mainService.sendChangePassword(
+      email,
+      `${process.env.CLIENT_URL}/password-reset/${user.changePassword}`,
+    );
+
+    return user.changePassword;
+  }
+
+  async updatePassword(email, password) {
+    const user = await User.findOne({ email });
+    user.password = bcrypt.hashSync(password, 7);
+    user.changePassword = uuid.v4();
+
+    return await user.save();
   }
 
   async activate(activationLink) {

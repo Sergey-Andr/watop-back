@@ -13,7 +13,8 @@ class CakeService {
 
   async getOne(id) {
     if (!id) throw new Error("id is now provided");
-    return Cake.findOne({ id });
+    const cake = await Cake.findOne({ id });
+    return cake;
   }
 
   async getByName(cakeName) {

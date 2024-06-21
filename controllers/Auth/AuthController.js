@@ -41,7 +41,27 @@ class AuthController {
     try {
       const { refreshToken } = req.body;
       const token = await userService.logout(refreshToken);
-      res.status(200);
+      res.send(token);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  async requestPasswordReset(req, res, next) {
+    try {
+      const { email } = req.body;
+      const changePassword = await userService.requestPasswordReset(email);
+      res.send(changePassword);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  async updatePassword(req, res, next) {
+    try {
+      const { email, password } = req.body;
+      const newPassword = await userService.updatePassword(email, password);
+      res.send(newPassword);
     } catch (e) {
       next(e);
     }
